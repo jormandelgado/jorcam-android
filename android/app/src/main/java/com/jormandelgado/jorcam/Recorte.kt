@@ -47,7 +47,7 @@ object Recorte {
         val constructor = Composition.Builder(listOf(EditedMediaItemSequence(elementos)))
         if (texto != null) {
             // El texto se coloca sobre el video ya recortado (los tiempos son los del video final).
-            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(ImmutableList.copyOf(listOf(texto))))))
+            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(ImmutableList.of(texto)))))
         }
         val composicion = constructor.build()
         val codificador = DefaultEncoderFactory.Builder(ctx)
