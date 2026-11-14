@@ -1,5 +1,6 @@
+﻿package com.jormandelgado.jorcam
 import com.google.common.collect.ImmutableList
-package com.jormandelgado.jorcam
+import androidx.media3.effect.TextureOverlay
 
 import android.content.Context
 import android.net.Uri
@@ -23,7 +24,7 @@ import java.io.File
 
 /**
  * Corta el video para conservar solo los tramos con voz y los une de forma continua.
- * Usa Media3 Transformer, que vuelve a codificar con el codificador de video del teléfono.
+ * Usa Media3 Transformer, que vuelve a codificar con el codificador de video del telÃ©fono.
  * IMPORTANTE: debe llamarse desde el hilo principal.
  */
 @OptIn(UnstableApi::class)
@@ -47,7 +48,7 @@ object Recorte {
         val constructor = Composition.Builder(listOf(EditedMediaItemSequence(elementos)))
         if (texto != null) {
             // El texto se coloca sobre el video ya recortado (los tiempos son los del video final).
-            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(ImmutableList.of(texto)))))
+            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(ImmutableList.of<TextureOverlay>(texto)))))
         }
         val composicion = constructor.build()
         val codificador = DefaultEncoderFactory.Builder(ctx)
