@@ -1,3 +1,4 @@
+import com.google.common.collect.ImmutableList
 package com.jormandelgado.jorcam
 
 import android.content.Context
@@ -46,7 +47,7 @@ object Recorte {
         val constructor = Composition.Builder(listOf(EditedMediaItemSequence(elementos)))
         if (texto != null) {
             // El texto se coloca sobre el video ya recortado (los tiempos son los del video final).
-            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(listOf(texto)))))
+            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(ImmutableList.copyOf(listOf(texto))))))
         }
         val composicion = constructor.build()
         val codificador = DefaultEncoderFactory.Builder(ctx)
