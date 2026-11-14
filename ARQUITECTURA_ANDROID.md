@@ -24,12 +24,18 @@ Visor en vivo a pantalla completa (con un botón para ocultar los controles) · 
 aviso "Cámara frontal activa / trasera activa" · pausar / descartar · recorte de silencios y unión continua · guardado en Películas/JorCam ·
 licencia offline idéntica a la PC · Cargar video (Pro) · reproducir último video · ver videos · compilación con GitHub Actions.
 
-## Compilación B (siguiente): subtítulos y título (Pro)
-- Subtítulos: whisper.cpp dentro de la app (compilado con el NDK de Android; modelo pequeño que se baja con reanudación).
-- Texto encima del video con Media3 (título 5 segundos arriba, subtítulos abajo, sin fondo, con contorno).
-- Detección de rostro con ML Kit (sin internet) para ubicar el título sin tapar la cara.
-- Ajustes de color, tamaño y fuente.
-Se deja para una compilación aparte porque necesita código nativo (C++) y no se puede comprobar sin compilar: si falla, no debe bloquear la A.
+## Compilación B1 (esta entrega): título, nombre del archivo y detección de rostro
+- Título (Pro): se escribe antes de grabar; aparece los primeros 5 segundos, **arriba de la cabeza**, solo letras con contorno, sin fondo.
+- El título es también el **nombre del archivo** .mp4 (sin emojis ni caracteres inválidos), para identificar cada video con el lector de pantalla.
+- Detección de rostro con ML Kit (sin internet) en varios cuadros del video; el título se acomoda para no tapar la cara y la letra se achica si no cabe.
+- Ajustes del título (Pro): color, fuente (clásica, con serifas, gruesa) y tamaño.
+- Módulos nuevos: Estilos.kt, Rostro.kt, TextoSobreVideo.kt (el texto se dibuja encima con Media3 al recortar el video).
+- El código de los subtítulos ya está previsto en TextoSobreVideo (lista de subtítulos con tiempos y su posición debajo de la barbilla); en B1 va vacía.
+
+## Compilación B2 (siguiente): subtítulos (Pro)
+- whisper.cpp dentro de la app (compilado con el NDK; modelo que se baja con reanudación; se transcribe cada tramo con voz).
+- Una línea por subtítulo, ¿ y ¡ automáticos, revisión del texto antes de guardar (como en la PC).
+- Se hace aparte porque necesita código en C++ que no se puede comprobar sin compilar.
 
 ## Compilación C: Modo 1 (cámara para la PC)
 USB y Wi-Fi, con código de emparejamiento, selección de cámara y micrófono del teléfono. Requiere cambios también en JorCam de PC

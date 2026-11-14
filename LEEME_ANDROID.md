@@ -74,3 +74,11 @@ En GitHub → Settings → Secrets and variables → Actions → New repository 
 ## 12. Publicar el APK en Releases
 `git tag android-v0.1.0` y `git push origin android-v0.1.0`. El robot lo publica en Releases (si el repositorio es privado,
 el Release también lo es; para descargas públicas usa tu repositorio público de descargas).
+
+## 13. Actualizar a la compilación B1 (si ya hiciste los pasos 1 a 8)
+1. Descomprime `jorcam-android-B1.zip` encima de tu carpeta (acepta reemplazar). Ya trae tu clave pública y el workflow sin el paso que fallaba.
+2. `cd "$env:USERPROFILE\Documents\Proyecto JorCam\jorcam-android"`
+3. `git add .` , `git commit -m "Compilacion B1: titulo y nombre del archivo"` , `git push`
+4. Actions → espera el check verde → baja el APK. **Desinstala antes la app vieja** (a menos que ya hayas hecho el paso 11).
+5. Prueba: activa tu licencia, escribe un título, graba 15 segundos hablando de frente con pausas, y revisa que el archivo se llame como el título,
+   que el título esté arriba de la cabeza y no la tape, y que se vea durante 5 segundos. Pídele a una persona que vea el resultado, o mándamelo a revisar.

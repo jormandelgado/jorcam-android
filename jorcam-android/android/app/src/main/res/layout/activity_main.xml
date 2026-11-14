@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Visor de la cámara en vivo, a pantalla completa, mientras la app está abierta y durante la grabación -->
+    <SurfaceView
+        android:id="@+id/vista"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no" />
+
+    <Button
+        android:id="@+id/btnControles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:minHeight="48dp"
+        android:text="@string/ocultar_controles" />
+
+    <ScrollView
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#B3000000"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:id="@+id/controles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/registro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <ProgressBar
+                android:id="@+id/barra"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/campoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:hint="@string/titulo_pro"
+                android:importantForAutofill="no"
+                android:inputType="textCapSentences"
+                android:maxLength="90"
+                android:minHeight="56dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textColorHint="#555555"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnGrabar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/grabar"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnPausar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/pausar"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnDetener"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/detener"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnDescartar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/descartar"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnCamara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cambiar_camara"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerMic"
+                android:paddingTop="8dp"
+                android:text="@string/microfono"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerMic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:background="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnCargar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cargar_pro"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnReproducir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/reproducir"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnCarpeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/carpeta"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnLicencia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/licencia"
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/checkSilencios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/quitar_silencios"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerSens"
+                android:text="@string/agresividad"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerSens"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:background="#FFFFFF" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerAntes"
+                android:paddingTop="8dp"
+                android:text="@string/aire_antes"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerAntes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:background="#FFFFFF" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerDespues"
+                android:paddingTop="8dp"
+                android:text="@string/aire_despues"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerDespues"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:background="#FFFFFF" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitColor"
+                android:paddingTop="8dp"
+                android:text="@string/color_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitFuente"
+                android:paddingTop="8dp"
+                android:text="@string/fuente_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitFuente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitTam"
+                android:paddingTop="8dp"
+                android:text="@string/tam_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitTam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+
+            <CheckBox
+                android:id="@+id/checkVoz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/voz_propia"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
