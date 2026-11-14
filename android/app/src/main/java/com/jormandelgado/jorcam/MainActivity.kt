@@ -66,6 +66,10 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var spinnerDespues: Spinner
     private lateinit var checkSilencios: CheckBox
     private lateinit var checkVoz: CheckBox
+    private lateinit var campoTitulo: EditText
+    private lateinit var spinnerTitColor: Spinner
+    private lateinit var spinnerTitFuente: Spinner
+    private lateinit var spinnerTitTam: Spinner
 
     private val principal = Handler(Looper.getMainLooper())
     private val ejecutor = Executors.newSingleThreadExecutor()
@@ -79,6 +83,8 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     private val opcionesSens = listOf("Baja", "Normal", "Alta", "Máxima")
     private val opcionesAire = listOf(0, 100, 200, 300, 500, 800, 1000)
+    private val opcionesColor = Estilos.COLORES.keys.toList()
+    private val opcionesTamTit = listOf(80, 90, 100, 110, 120)
 
     private val pedirPermisos = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { r ->
         if (r.values.all { it }) iniciarCamara(false) else decir("Faltan los permisos de cámara y micrófono. Actívalos en los ajustes del teléfono.")
@@ -115,6 +121,10 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerDespues = findViewById(R.id.spinnerDespues)
         checkSilencios = findViewById(R.id.checkSilencios)
         checkVoz = findViewById(R.id.checkVoz)
+        campoTitulo = findViewById(R.id.campoTitulo)
+        spinnerTitColor = findViewById(R.id.spinnerTitColor)
+        spinnerTitFuente = findViewById(R.id.spinnerTitFuente)
+        spinnerTitTam = findViewById(R.id.spinnerTitTam)
 
         ajustes = Ajustes(this)
         anunciador = Anunciador(this, superficie, registro)
@@ -271,6 +281,11 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerSens.isEnabled = pro
         spinnerAntes.isEnabled = pro
         spinnerDespues.isEnabled = pro
+        campoTitulo.isEnabled = pro
+        campoTitulo.hint = getString(if (pro) R.string.titulo else R.string.titulo_pro)
+        spinnerTitColor.isEnabled = pro
+        spinnerTitFuente.isEnabled = pro
+        spinnerTitTam.isEnabled = pro
         barra.visibility = if (fase == Fase.PROCESANDO) View.VISIBLE else View.GONE
     }
 
@@ -330,7 +345,8 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         ultimoPorcentaje = -1
         actualizar()
         decir("Guardando el video.")
-        ejecutor.execute { procesar(Uri.fromFile(archivo), archivo, "JorCam_${marca()}", 0L) }
+        val titulo = campoTitulo.text.toString()
+        ejecutor.execute { procesar(Uri.fromFile(archivo), archivo, "JorCam_${marca()}", 0L, titulo) }
     }
 
     private fun cambiarCamara() {
@@ -343,7 +359,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     // ------------------------------------------------------------------ procesar y guardar
 
-    private fun procesar(entrada: Uri, temporal: File?, nombre: String, limiteMs: Long) {
+    private fun procesar(entrada: Uri, temporal: File?, nombre: String, limiteMs: Long, tituloEscrito: String) {
         try {
             val duracion = Almacen.duracionMs(this, entrada)
             if (limiteMs > 0 && duracion > limiteMs) {
@@ -351,38 +367,92 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 principal.post { terminar() }
                 return
             }
+            val pro = Licencia.estado(this).pro
+            // El título solo se pone en videos grabados con JorCam (no en los que se cargan), y solo con licencia Pro.
+            val titulo = if (pro && limiteMs == 0L) Estilos.sinEmojis(tituloEscrito) else ""
+            var nombreFinal = nombre
+            if (titulo.isNotEmpty()) {
+                val deTitulo = Estilos.nombreDeArchivo(tituloEscrito)
+                if (deTitulo.isNotEmpty()) nombreFinal = deTitulo
+            }
+
             var tramos: List<Silencios.Tramo>? = null
             if (ajustes.quitarSilencios && duracion > 0) {
                 decir("Buscando silencios.")
-                val pro = Licencia.estado(this).pro
                 val sens = if (pro) ajustes.sensibilidad else "Alta"
                 val antes = if (pro) ajustes.aireAntesMs else 500
                 val despues = if (pro) ajustes.aireDespuesMs else 200
                 tramos = Silencios.detectarVoz(this, entrada, duracion, sens, antes, despues) { p -> avanzar(p / 4) }
                 if (tramos == null) decir("No pude separar la voz del ruido; no se quita ningún silencio.")
             }
-            if (tramos == null || !Silencios.hayCortes(tramos, duracion)) {
-                if (tramos != null) decir("No encontré silencios que quitar.")
-                guardarFinal(entrada, nombre, temporal, null)
+            val hayCortes = tramos != null && Silencios.hayCortes(tramos, duracion)
+            if (tramos != null && !hayCortes) decir("No encontré silencios que quitar.")
+
+            val lista: List<Silencios.Tramo>? = when {
+                hayCortes -> tramos
+                titulo.isNotEmpty() && duracion > 0 -> listOf(Silencios.Tramo(0L, duracion))
+                else -> null
+            }
+            if (lista == null) {
+                guardarFinal(entrada, nombreFinal, temporal, null)
                 return
             }
-            val conservado = tramos.sumOf { it.finMs - it.inicioMs }
-            decir("Se van a quitar ${(duracion - conservado) / 1000} segundos de silencio: el video pasa de ${texto(duracion)} a ${texto(conservado)}.")
+
+            val textoVideo: TextoSobreVideo? = if (titulo.isNotEmpty()) prepararTexto(entrada, lista, titulo) else null
+            val conservado = lista.sumOf { it.finMs - it.inicioMs }
+            if (hayCortes) {
+                decir("Se van a quitar ${(duracion - conservado) / 1000} segundos de silencio: el video pasa de ${texto(duracion)} a ${texto(conservado)}.")
+            }
+            if (textoVideo != null) decir("Escribiendo el título sobre el video.")
             val salida = File(cacheDir, "salida_${marca()}.mp4")
-            val lista = tramos
             principal.post {
-                Recorte.recortar(this, entrada, lista, salida, { p -> avanzar(25 + p * 3 / 4) }) { ok, error ->
+                Recorte.recortar(this, entrada, lista, textoVideo, salida, { p -> avanzar(25 + p * 3 / 4) }) { ok, error ->
                     if (ok) {
-                        ejecutor.execute { guardarFinal(Uri.fromFile(salida), nombre, temporal, salida) }
+                        ejecutor.execute { guardarFinal(Uri.fromFile(salida), nombreFinal, temporal, salida) }
                     } else {
-                        decir("No se pudo recortar ($error). Guardo el video sin recortar.")
-                        ejecutor.execute { guardarFinal(entrada, nombre, temporal, salida) }
+                        decir("No se pudo recortar ($error). Guardo el video sin cambios.")
+                        ejecutor.execute { guardarFinal(entrada, nombreFinal, temporal, salida) }
                     }
                 }
             }
         } catch (e: Exception) {
             decir("Error al guardar: ${e.message}")
             principal.post { terminar() }
+        }
+    }
+
+    /** Busca la cara y calcula dónde va el título, igual que en la versión de PC. */
+    private fun prepararTexto(entrada: Uri, lista: List<Silencios.Tramo>, titulo: String): TextoSobreVideo {
+        decir("Buscando tu cara para colocar el título sin taparla.")
+        val (ancho, alto) = dimensionesFinales(entrada)
+        val total = lista.sumOf { it.finMs - it.inicioMs }
+        val instantes = listOf(400L, 1500L, 3000L, 4500L, 8000L, 16000L, 26000L, 38000L).filter { it < total }
+        val tiempos = instantes.map { Rostro.tiempoOrigen(it, lista) }
+        val posicion = if (tiempos.isEmpty()) null else Rostro.buscar(this, entrada, tiempos, alto)
+        if (posicion == null) decir("No encontré tu cara; coloco el título en una posición estándar.")
+        val tipTitulo = Estilos.tipografia(ajustes.titFuente)
+        val colocacion = Rostro.colocar(titulo, posicion, ajustes.titTam.toFloat(), tipTitulo, 60f, alto)
+        colocacion.aviso?.let { decir(it) }
+        return TextoSobreVideo(
+            ancho, alto, colocacion.lineasTitulo, colocacion.tituloInferiorY, colocacion.tamTitulo,
+            Estilos.colorDe(ajustes.titColor), tipTitulo, 5L,
+            emptyList(), colocacion.subY, 60f, Estilos.colorDe("Blanco"), Estilos.tipografia("Clásica (Arial)")
+        )
+    }
+
+    /** Ancho y alto del video ya derecho (vertical), teniendo en cuenta la marca de rotación. */
+    private fun dimensionesFinales(uri: Uri): Pair<Int, Int> {
+        val lector = android.media.MediaMetadataRetriever()
+        return try {
+            lector.setDataSource(this, uri)
+            val w = lector.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 1080
+            val h = lector.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 1920
+            val giro = lector.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)?.toIntOrNull() ?: 0
+            if (giro == 90 || giro == 270) Pair(h, w) else Pair(w, h)
+        } catch (e: Exception) {
+            Pair(1080, 1920)
+        } finally {
+            lector.release()
         }
     }
 
@@ -437,7 +507,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         ultimoPorcentaje = -1
         actualizar()
         decir("Video recibido. Revisando el audio.")
-        ejecutor.execute { procesar(uri, null, "limpio_${marca()}", 20 * 60_000L) }
+        ejecutor.execute { procesar(uri, null, "limpio_${marca()}", 20 * 60_000L, "") }
     }
 
     private fun reproducirUltimo() {
@@ -533,6 +603,16 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerAntes.setSelection(opcionesAire.indexOf(ajustes.aireAntesMs).coerceAtLeast(0))
         spinnerDespues.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, textos)
         spinnerDespues.setSelection(opcionesAire.indexOf(ajustes.aireDespuesMs).coerceAtLeast(0))
+
+        spinnerTitColor.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, opcionesColor)
+        spinnerTitColor.setSelection(opcionesColor.indexOf(ajustes.titColor).coerceAtLeast(0))
+        spinnerTitFuente.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Estilos.FUENTES)
+        spinnerTitFuente.setSelection(Estilos.FUENTES.indexOf(ajustes.titFuente).coerceAtLeast(0))
+        spinnerTitTam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, opcionesTamTit.map { "$it" })
+        spinnerTitTam.setSelection(opcionesTamTit.indexOf(ajustes.titTam).coerceAtLeast(0))
+        spinnerTitColor.onItemSelectedListener = alElegir { i -> ajustes.titColor = opcionesColor[i] }
+        spinnerTitFuente.onItemSelectedListener = alElegir { i -> ajustes.titFuente = Estilos.FUENTES[i] }
+        spinnerTitTam.onItemSelectedListener = alElegir { i -> ajustes.titTam = opcionesTamTit[i] }
 
         checkSilencios.setOnCheckedChangeListener { _, marcado -> ajustes.quitarSilencios = marcado }
         checkVoz.setOnCheckedChangeListener { _, marcado ->

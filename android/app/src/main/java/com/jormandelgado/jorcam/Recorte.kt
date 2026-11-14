@@ -7,8 +7,10 @@ import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.effect.OverlayEffect
 import androidx.media3.transformer.Composition
 import androidx.media3.transformer.DefaultEncoderFactory
+import androidx.media3.transformer.Effects
 import androidx.media3.transformer.EditedMediaItem
 import androidx.media3.transformer.EditedMediaItemSequence
 import androidx.media3.transformer.ExportException
@@ -26,7 +28,7 @@ import java.io.File
 @OptIn(UnstableApi::class)
 object Recorte {
     fun recortar(
-        ctx: Context, entrada: Uri, tramos: List<Silencios.Tramo>, salida: File,
+        ctx: Context, entrada: Uri, tramos: List<Silencios.Tramo>, texto: TextoSobreVideo?, salida: File,
         progreso: (Int) -> Unit, alTerminar: (Boolean, String?) -> Unit
     ) {
         val elementos = tramos.filter { it.finMs - it.inicioMs >= 200 }.map { t ->
@@ -41,7 +43,12 @@ object Recorte {
             alTerminar(false, "no hay voz que conservar")
             return
         }
-        val composicion = Composition.Builder(listOf(EditedMediaItemSequence(elementos))).build()
+        val constructor = Composition.Builder(listOf(EditedMediaItemSequence(elementos)))
+        if (texto != null) {
+            // El texto se coloca sobre el video ya recortado (los tiempos son los del video final).
+            constructor.setEffects(Effects(emptyList(), listOf(OverlayEffect(listOf(texto)))))
+        }
+        val composicion = constructor.build()
         val codificador = DefaultEncoderFactory.Builder(ctx)
             .setRequestedVideoEncoderSettings(VideoEncoderSettings.Builder().setBitrate(10_000_000).build())
             .build()

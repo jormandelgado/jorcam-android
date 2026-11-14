@@ -52,6 +52,22 @@
                 android:max="100"
                 android:visibility="gone" />
 
+            <EditText
+                android:id="@+id/campoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:hint="@string/titulo_pro"
+                android:importantForAutofill="no"
+                android:inputType="textCapSentences"
+                android:maxLength="90"
+                android:minHeight="56dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textColorHint="#555555"
+                android:textSize="18sp" />
+
             <Button
                 android:id="@+id/btnGrabar"
                 android:layout_width="match_parent"
@@ -195,6 +211,54 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:background="#FFFFFF" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitColor"
+                android:paddingTop="8dp"
+                android:text="@string/color_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitFuente"
+                android:paddingTop="8dp"
+                android:text="@string/fuente_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitFuente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitTam"
+                android:paddingTop="8dp"
+                android:text="@string/tam_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTitTam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
 
             <CheckBox
                 android:id="@+id/checkVoz"

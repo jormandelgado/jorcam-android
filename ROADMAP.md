@@ -13,5 +13,6 @@
 
 ## Android
 - Compilación A: modo bolsillo básico (este paquete).
-- Compilación B: subtítulos y título (Pro).
+- Compilación B1: título, nombre del archivo y detección de rostro (Pro).
+- Compilación B2: subtítulos con whisper.cpp (Pro).
 - Compilación C: conexión con la PC por USB y Wi-Fi.

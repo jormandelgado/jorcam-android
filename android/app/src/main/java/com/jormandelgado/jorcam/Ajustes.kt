@@ -26,6 +26,18 @@ class Ajustes(contexto: Context) {
         get() = p.getString("mic_nombre", "") ?: ""
         set(v) { p.edit().putString("mic_nombre", v).apply() }
 
+    var titColor: String
+        get() = p.getString("tit_color", "Blanco") ?: "Blanco"
+        set(v) { p.edit().putString("tit_color", v).apply() }
+
+    var titFuente: String
+        get() = p.getString("tit_fuente", "Gruesa (Arial Black)") ?: "Gruesa (Arial Black)"
+        set(v) { p.edit().putString("tit_fuente", v).apply() }
+
+    var titTam: Int
+        get() = p.getInt("tit_tam", 100)
+        set(v) { p.edit().putInt("tit_tam", v).apply() }
+
     var vozPropia: Boolean
         get() = p.getBoolean("voz_propia", false)
         set(v) { p.edit().putBoolean("voz_propia", v).apply() }

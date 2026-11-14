@@ -11,8 +11,8 @@ android {
         applicationId = "com.jormandelgado.jorcam"
         minSdk = 29
         targetSdk = 30
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     signingConfigs {
@@ -58,4 +58,5 @@ dependencies {
     implementation("androidx.media3:media3-effect:1.4.1")
     implementation("androidx.media3:media3-transformer:1.4.1")
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    implementation("com.google.mlkit:face-detection:16.1.6")
 }

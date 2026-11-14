@@ -23,4 +23,9 @@
     <string name="cancelar">Cancelar</string>
     <string name="ocultar_controles">Ocultar controles</string>
     <string name="mostrar_controles">Mostrar controles</string>
+    <string name="titulo">Título del video (aparece 5 segundos arriba y es el nombre del archivo)</string>
+    <string name="titulo_pro">Título del video (Pro)</string>
+    <string name="color_titulo">Color del título (Pro)</string>
+    <string name="fuente_titulo">Fuente del título (Pro)</string>
+    <string name="tam_titulo">Tamaño del título (Pro)</string>
 </resources>
