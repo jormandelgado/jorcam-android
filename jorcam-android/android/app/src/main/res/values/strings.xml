@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JorCam</string>
+    <string name="grabar">Grabar</string>
+    <string name="pausar">Pausar</string>
+    <string name="reanudar">Reanudar</string>
+    <string name="detener">Detener y guardar</string>
+    <string name="descartar">Descartar grabación</string>
+    <string name="cambiar_camara">Cambiar cámara</string>
+    <string name="microfono">Micrófono</string>
+    <string name="cargar">Cargar video</string>
+    <string name="cargar_pro">Cargar video (Pro)</string>
+    <string name="reproducir">Reproducir último video</string>
+    <string name="carpeta">Ver los videos guardados</string>
+    <string name="licencia">Licencia</string>
+    <string name="quitar_silencios">Quitar los silencios</string>
+    <string name="agresividad">Qué tan agresivo es el recorte de silencios (Pro)</string>
+    <string name="aire_antes">Aire antes de cada frase, en milisegundos (Pro)</string>
+    <string name="aire_despues">Aire después de cada frase, en milisegundos (Pro)</string>
+    <string name="voz_propia">Anunciar con la voz de JorCam (si tu lector de pantalla no anuncia)</string>
+    <string name="clave_licencia">Clave de licencia (pégala completa)</string>
+    <string name="activar">Activar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="ocultar_controles">Ocultar controles</string>
+    <string name="mostrar_controles">Mostrar controles</string>
+    <string name="titulo">Título del video (aparece 5 segundos arriba y es el nombre del archivo)</string>
+    <string name="titulo_pro">Título del video (Pro)</string>
+    <string name="color_titulo">Color del título (Pro)</string>
+    <string name="fuente_titulo">Fuente del título (Pro)</string>
+    <string name="tam_titulo">Tamaño del título (Pro)</string>
+</resources>
