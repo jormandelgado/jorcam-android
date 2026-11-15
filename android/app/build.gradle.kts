@@ -1,4 +1,4 @@
-plugins {
+﻿plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
@@ -8,6 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
+        setProperty("archivesBaseName", "JorCam-B1")
         applicationId = "com.jormandelgado.jorcam"
         minSdk = 29
         targetSdk = 30
