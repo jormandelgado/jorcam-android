@@ -94,3 +94,12 @@ el Release también lo es; para descargas públicas usa tu repositorio público 
    Luego transcribe, te muestra la pantalla de revisión (un cuadro por frase) y al continuar escribe el texto y guarda.
 7. Anota y mándame: cuánto tardó la transcripción (la app lo anuncia), si los subtítulos coinciden con lo que dijiste, si quedan debajo de la barbilla sin tapar la cara,
    y si la pantalla de revisión se lee bien con tu lector.
+
+## 15. Actualizar a la compilación B2.1
+1. Descomprime `jorcam-android-B2.1-cambios.zip` encima de tu carpeta (acepta reemplazar).
+2. `cd "$env:USERPROFILE\Documents\Proyecto JorCam\jorcam-android"`
+3. `git add .` , `git commit -m "B2.1: revision de subtitulos, emojis y selector de modo"` , `git push`
+4. Cuando termine el check verde, instala el APK.
+5. Pruebas: (a) al abrir debe salir la pantalla para elegir el modo, y "Grabación directa" abre la cámara; (b) graba con título y subtítulos: en la pantalla de revisión los dos botones deben estar arriba, el botón Atrás debe funcionar,
+   y cada frase debe tener su botón "Reproducir este tramo" que suene solo esa parte; (c) prueba un título con emojis y la casilla de emojis automáticos en Ajustes generales;
+   (d) mira si los emojis se ven bien sobre el video, con contorno y sin deformarse.

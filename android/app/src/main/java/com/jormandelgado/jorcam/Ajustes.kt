@@ -42,6 +42,10 @@ class Ajustes(contexto: Context) {
         get() = p.getBoolean("sub_activos", true)
         set(v) { p.edit().putBoolean("sub_activos", v).apply() }
 
+    var subEmojis: Boolean
+        get() = p.getBoolean("sub_emojis", false)
+        set(v) { p.edit().putBoolean("sub_emojis", v).apply() }
+
     var subRevisar: Boolean
         get() = p.getBoolean("sub_revisar", true)
         set(v) { p.edit().putBoolean("sub_revisar", v).apply() }

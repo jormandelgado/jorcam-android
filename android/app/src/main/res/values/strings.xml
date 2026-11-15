@@ -37,4 +37,13 @@
     <string name="fuente_subs">Fuente de los subtítulos (Pro)</string>
     <string name="tam_subs">Tamaño de los subtítulos (Pro)</string>
     <string name="modelo_voz">Modelo de voz de los subtítulos (se descarga una sola vez)</string>
+    <string name="modo_titulo">¿Cómo quieres trabajar?</string>
+    <string name="modo_directo">Grabación directa en el teléfono</string>
+    <string name="modo_pc">Conectar con la computadora</string>
+    <string name="cambiar_modo">Cambiar de modo de trabajo</string>
+    <string name="emojis_auto">Agregar emojis automáticos a los subtítulos (Pro)</string>
+    <string name="rev_titulo">Revisa los subtítulos</string>
+    <string name="rev_ayuda">Corrige cada frase por separado. Si dejas una vacía, se borra. Con el botón de cada tramo puedes escucharlo antes de corregir.</string>
+    <string name="rev_continuar">Continuar con estos subtítulos</string>
+    <string name="rev_sin">Guardar sin subtítulos</string>
 </resources>

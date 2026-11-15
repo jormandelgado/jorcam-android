@@ -27,6 +27,7 @@ import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +65,18 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var btnCerrar: Button
     private lateinit var btnAjustes: Button
     private lateinit var contenedorAjustes: LinearLayout
+    private lateinit var pantallaModo: View
+    private lateinit var btnModoDirecto: Button
+    private lateinit var btnModoPC: Button
+    private lateinit var btnModo: Button
+    private lateinit var checkEmojis: CheckBox
+    private lateinit var revision: RevisionSubtitulos
+    private val atrasRevision = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            revision.cancelar()
+        }
+    }
+    private var modo = 0 // 0 = todavía no eligió, 1 = grabación directa
     private lateinit var spinnerMic: Spinner
     private lateinit var spinnerSens: Spinner
     private lateinit var spinnerAntes: Spinner
@@ -99,7 +112,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private val opcionesModelo = Modelo.OPCIONES.keys.toList()
 
     private val pedirPermisos = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { r ->
-        if (r.values.all { it }) iniciarCamara(false) else decir("Faltan los permisos de cámara y micrófono. Actívalos en los ajustes del teléfono.")
+        if (r.values.all { it }) mostrarModo() else decir("Faltan los permisos de cámara y micrófono. Actívalos en los ajustes del teléfono.")
     }
 
     private val elegirVideo = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -130,6 +143,11 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         btnCerrar = findViewById(R.id.btnCerrar)
         btnAjustes = findViewById(R.id.btnAjustes)
         contenedorAjustes = findViewById(R.id.contenedorAjustes)
+        pantallaModo = findViewById(R.id.pantallaModo)
+        btnModoDirecto = findViewById(R.id.btnModoDirecto)
+        btnModoPC = findViewById(R.id.btnModoPC)
+        btnModo = findViewById(R.id.btnModo)
+        checkEmojis = findViewById(R.id.checkEmojis)
         spinnerMic = findViewById(R.id.spinnerMic)
         spinnerSens = findViewById(R.id.spinnerSens)
         spinnerAntes = findViewById(R.id.spinnerAntes)
@@ -158,6 +176,11 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         lp.height = (resources.displayMetrics.heightPixels * 0.5).toInt()
         panel.layoutParams = lp
 
+        revision = RevisionSubtitulos(this)
+        revision.alCambiarAbierta = { abierta -> atrasRevision.isEnabled = abierta }
+        onBackPressedDispatcher.addCallback(this, atrasRevision)
+        btnModoDirecto.setOnClickListener { elegirModo(1) }
+        btnModoPC.setOnClickListener { elegirModo(2) }
         configurarCamara()
         configurarAjustes()
         configurarBotones()
@@ -169,7 +192,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         decir("JorCam. " + if (estado.pro) estado.mensaje else "Versión gratuita. Las funciones Pro se activan con una licencia, en el botón Licencia.")
 
         if (tienePermisos()) {
-            // la cámara se abre cuando el visor esté listo (surfaceCreated)
+            mostrarModo() // la cámara se abre al elegir el modo de grabación directa
         } else {
             pedirPermisos.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
         }
@@ -178,7 +201,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     override fun onResume() {
         super.onResume()
-        if (superficieLista && tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
+        if (modo == 1 && superficieLista && tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
     }
 
     override fun onPause() {
@@ -197,7 +220,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         superficieLista = true
-        if (tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
+        if (modo == 1 && tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -280,6 +303,9 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         btnCarpeta.setOnClickListener { abrirCarpeta() }
         btnLicencia.setOnClickListener { dialogoLicencia() }
         btnCerrar.setOnClickListener { cerrarApp() }
+        btnModo.setOnClickListener {
+            if (fase != Fase.LISTO) decir("Termina o descarta la grabación antes de cambiar de modo.") else mostrarModo()
+        }
         btnAjustes.setOnClickListener {
             val oculto = contenedorAjustes.visibility == View.GONE
             contenedorAjustes.visibility = if (oculto) View.VISIBLE else View.GONE
@@ -316,6 +342,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerSubColor.isEnabled = pro
         spinnerSubFuente.isEnabled = pro
         spinnerSubTam.isEnabled = pro
+        checkEmojis.isEnabled = pro
         barra.visibility = if (fase == Fase.PROCESANDO) View.VISIBLE else View.GONE
     }
 
@@ -379,6 +406,32 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         ejecutor.execute { procesar(Uri.fromFile(archivo), archivo, "JorCam_${marca()}", 0L, titulo) }
     }
 
+    private fun fondoAccesible(visible: Boolean) {
+        val valor = if (visible) View.IMPORTANT_FOR_ACCESSIBILITY_AUTO else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        panel.importantForAccessibility = valor
+        btnControles.importantForAccessibility = valor
+    }
+
+    private fun mostrarModo() {
+        modo = 0
+        camara.cerrar()
+        pantallaModo.visibility = View.VISIBLE
+        fondoAccesible(false)
+        decir("Elige cómo quieres trabajar: grabación directa en el teléfono, o conectar con la computadora.")
+    }
+
+    private fun elegirModo(eleccion: Int) {
+        if (eleccion == 2) {
+            decir("Conectar con la computadora llega en la próxima compilación. Por ahora elige grabación directa.")
+            return
+        }
+        modo = 1
+        pantallaModo.visibility = View.GONE
+        fondoAccesible(true)
+        decir("Grabación directa en el teléfono.")
+        iniciarCamara(false)
+    }
+
     private fun cerrarApp() {
         when (fase) {
             Fase.GRABANDO, Fase.PAUSADO ->
@@ -427,7 +480,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
             val hayCortes = tramos != null && Silencios.hayCortes(tramos, duracion)
             if (tramos != null && !hayCortes) decir("No encontré silencios que quitar.")
 
-            val ponerTexto = Estilos.sinEmojis(tituloBruto).isNotEmpty() || usarSubs
+            val ponerTexto = Estilos.limpiarEspacios(tituloBruto).isNotEmpty() || usarSubs
             val lista: List<Silencios.Tramo>? = when {
                 hayCortes -> tramos
                 ponerTexto && duracion > 0 -> listOf(Silencios.Tramo(0L, duracion))
@@ -444,7 +497,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 frases = resultado.first
                 tituloBruto = resultado.second
             }
-            val titulo = Estilos.sinEmojis(tituloBruto)
+            val titulo = Estilos.limpiarEspacios(tituloBruto) // los emojis del título se conservan; solo se quitan del nombre del archivo
             var nombreFinal = nombre
             if (titulo.isNotEmpty()) {
                 val deTitulo = Estilos.nombreDeArchivo(tituloBruto)
@@ -504,18 +557,21 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
             decir("No se detectó voz para subtitular. Se guarda sin subtítulos.")
             return sinSubs
         }
-        decir("Se detectaron ${frases.size} subtítulos.")
-        if (!ajustes.subRevisar) return Pair(frases, tituloActual)
-        val revision = pedirRevision(frases, tituloActual) ?: return sinSubs
-        return Pair(revision.frases, revision.titulo)
+        val conEmojis = if (ajustes.subEmojis) Emojis.agregar(frases) else frases
+        decir("Se detectaron ${conEmojis.size} subtítulos.")
+        if (!ajustes.subRevisar) return Pair(conEmojis, tituloActual)
+        val resultado = pedirRevision(conEmojis, tituloActual, entrada, lista) ?: return sinSubs
+        return Pair(resultado.frases, resultado.titulo)
     }
 
     /** Muestra la pantalla de revisión y espera la respuesta (el guardado queda en pausa mientras tanto). */
-    private fun pedirRevision(frases: List<Subtitulos.Frase>, titulo: String): RevisionSubtitulos.Resultado? {
+    private fun pedirRevision(
+        frases: List<Subtitulos.Frase>, titulo: String, entrada: Uri, lista: List<Silencios.Tramo>
+    ): RevisionSubtitulos.Resultado? {
         val cola = java.util.concurrent.ArrayBlockingQueue<Respuesta>(1)
         runOnUiThread {
-            decir("Revisa los subtítulos. Hay ${frases.size}, cada uno en su propio cuadro. El título también se puede cambiar arriba.")
-            RevisionSubtitulos.mostrar(this, frases, titulo) { r -> cola.offer(Respuesta(r)) }
+            decir("Revisa los subtítulos. Los botones para continuar están arriba. Hay ${frases.size}, cada uno con su cuadro y su botón para escuchar ese tramo.")
+            revision.mostrar(frases, titulo, entrada, { ms -> Rostro.tiempoOrigen(ms, lista) }) { r -> cola.offer(Respuesta(r)) }
         }
         return cola.poll(60, java.util.concurrent.TimeUnit.MINUTES)?.valor
     }
@@ -717,6 +773,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerTitTam.onItemSelectedListener = alElegir { i -> ajustes.titTam = opcionesTamTit[i] }
 
         checkSubs.isChecked = ajustes.subActivos
+        checkEmojis.isChecked = ajustes.subEmojis
         checkRevisar.isChecked = ajustes.subRevisar
         spinnerSubColor.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, opcionesColor)
         spinnerSubColor.setSelection(opcionesColor.indexOf(ajustes.subColor).coerceAtLeast(0))
@@ -728,6 +785,10 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         spinnerModelo.setSelection(opcionesModelo.indexOf(ajustes.modeloVoz).coerceAtLeast(0))
         checkSubs.setOnCheckedChangeListener { _, marcado -> ajustes.subActivos = marcado }
         checkRevisar.setOnCheckedChangeListener { _, marcado -> ajustes.subRevisar = marcado }
+        checkEmojis.setOnCheckedChangeListener { _, marcado ->
+            ajustes.subEmojis = marcado
+            decir(if (marcado) "Emojis automáticos activados." else "Emojis automáticos desactivados.")
+        }
         spinnerSubColor.onItemSelectedListener = alElegir { i -> ajustes.subColor = opcionesColor[i] }
         spinnerSubFuente.onItemSelectedListener = alElegir { i -> ajustes.subFuente = Estilos.FUENTES[i] }
         spinnerSubTam.onItemSelectedListener = alElegir { i -> ajustes.subTam = opcionesTamSub[i] }

@@ -155,6 +155,13 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+            <Button
+                android:id="@+id/btnModo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cambiar_modo"
+                android:textSize="18sp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -332,6 +339,14 @@
                 android:background="#FFFFFF"
                 android:minHeight="48dp" />
             <CheckBox
+                android:id="@+id/checkEmojis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/emojis_auto"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <CheckBox
                 android:id="@+id/checkVoz"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -342,4 +357,101 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <!-- Pantalla para elegir el modo de trabajo (al abrir la app) -->
+    <LinearLayout
+        android:id="@+id/pantallaModo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:accessibilityPaneTitle="Elegir modo de trabajo"
+        android:background="#FF101010"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/modo_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnModoDirecto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="72dp"
+            android:text="@string/modo_directo"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btnModoPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="72dp"
+            android:text="@string/modo_pc"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <!-- Pantalla de revisión de subtítulos: los botones están arriba, fuera de la lista -->
+    <LinearLayout
+        android:id="@+id/pantallaRevision"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:accessibilityPaneTitle="Revisión de subtítulos"
+        android:background="#FF101010"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rev_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/btnRevContinuar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="@string/rev_continuar"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnRevSin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="@string/rev_sin"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/rev_ayuda"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/listaRevision"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </LinearLayout>
 </FrameLayout>

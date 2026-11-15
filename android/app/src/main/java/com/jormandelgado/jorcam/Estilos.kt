@@ -95,6 +95,8 @@ object Estilos {
         return if (t.length > 80) t.substring(0, 80).trim() else t
     }
 
+    fun limpiarEspacios(texto: String): String = texto.replace(Regex("\\s+"), " ").trim()
+
     fun sinEmojis(texto: String): String =
         texto.replace(Regex("[\\uD83C-\\uDBFF\\uDC00-\\uDFFF\\u2600-\\u27BF\\u2B00-\\u2BFF\\uFE0F\\u200D\\u20E3]"), "").replace(Regex("\\s+"), " ").trim()
 }

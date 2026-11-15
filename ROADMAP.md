@@ -15,8 +15,9 @@
 ## Android
 - Compilación A: modo bolsillo básico (este paquete).
 - Compilación B1: título, nombre del archivo y detección de rostro (Pro).
-- Compilación B2: subtítulos con whisper.cpp y revisión por frases (Pro) — entregada, pendiente de prueba.
-- Compilación C: conexión con la PC por USB y Wi-Fi.
+- Compilación B2: subtítulos con whisper.cpp y revisión por frases (Pro) — probada: compila, descarga el modelo y transcribe rápido en el Moto E40; falló la pantalla de revisión.
+- Compilación B2.1: revisión corregida (botones arriba, Atrás, escuchar cada tramo), emojis y selector de modo.
+- Compilación C: conexión con la PC por USB y Wi-Fi (el teléfono graba y manda el video a la PC al detener; la PC pone el audio, la sincronía, los silencios, el título y los subtítulos).
 
 ## Android B2: revisión de subtítulos estilo TikTok
 Una pantalla de revisión con un cuadro de texto independiente por cada frase detectada ("Subtítulo 1 de 12, del segundo 3 al 5"), más el título
