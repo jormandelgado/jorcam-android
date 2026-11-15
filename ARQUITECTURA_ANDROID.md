@@ -32,10 +32,16 @@ licencia offline idéntica a la PC · Cargar video (Pro) · reproducir último v
 - Módulos nuevos: Estilos.kt, Rostro.kt, TextoSobreVideo.kt (el texto se dibuja encima con Media3 al recortar el video).
 - El código de los subtítulos ya está previsto en TextoSobreVideo (lista de subtítulos con tiempos y su posición debajo de la barbilla); en B1 va vacía.
 
-## Compilación B2 (siguiente): subtítulos (Pro)
-- whisper.cpp dentro de la app (compilado con el NDK; modelo que se baja con reanudación; se transcribe cada tramo con voz).
-- Una línea por subtítulo, ¿ y ¡ automáticos, revisión del texto antes de guardar (como en la PC).
-- Se hace aparte porque necesita código en C++ que no se puede comprobar sin compilar.
+## Compilación B2 (esta entrega): subtítulos automáticos (Pro)
+- **Motor de voz:** whisper.cpp dentro de la app (código en C++ compilado con el NDK, solo para teléfonos de 64 bits). GitHub Actions lo descarga en cada compilación (versión fija v1.7.4).
+- **Modelo de voz:** se baja una sola vez desde internet (es lo único para lo que la app usa internet), con reanudación si se corta; hay tres tamaños (tiny 75 MB, base 142 MB, small 466 MB). Después todo funciona sin internet.
+- **Cómo transcribe:** solo los tramos con voz (los mismos del recorte de silencios), así los tiempos coinciden con el video final.
+- **Texto:** se quitan etiquetas como [música], se agregan ¿ y ¡ cuando faltan, una sola línea por subtítulo (medida con la fuente real), y se reparte el tiempo según el largo de cada línea.
+- **Posición:** debajo de la barbilla, usando la misma detección de rostro del título, sin tapar la cara.
+- **Revisión (estilo TikTok):** una pantalla con un cuadro de edición independiente por frase ("Subtítulo 3 de 12, del segundo 8 al 10"), el título editable arriba, y los botones "Continuar con estos subtítulos" y "Guardar sin subtítulos". Una frase vacía se borra.
+- **Ajustes (Pro):** activar o no los subtítulos, revisar antes de guardar, color, fuente y tamaño; y el modelo de voz.
+- **Módulos nuevos:** Whisper.kt, Modelo.kt, Audio16k.kt, Subtitulos.kt, RevisionSubtitulos.kt, y en cpp/: CMakeLists.txt y whisper_jni.cpp.
+- **Riesgos:** (1) es la parte más difícil de compilar a ciegas: puede fallar en el paso del código C++; (2) la velocidad en el Moto E40 es desconocida: la app anuncia cuánto tardó la transcripción; si es muy lento, elige el modelo "tiny"; (3) Whisper puede equivocarse con ruido o con palabras poco comunes: por eso existe la revisión.
 
 ## Compilación C: Modo 1 (cámara para la PC)
 USB y Wi-Fi, con código de emparejamiento, selección de cámara y micrófono del teléfono. Requiere cambios también en JorCam de PC

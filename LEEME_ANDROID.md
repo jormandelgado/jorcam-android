@@ -82,3 +82,15 @@ el Release también lo es; para descargas públicas usa tu repositorio público 
 4. Actions → espera el check verde → baja el APK. **Desinstala antes la app vieja** (a menos que ya hayas hecho el paso 11).
 5. Prueba: activa tu licencia, escribe un título, graba 15 segundos hablando de frente con pausas, y revisa que el archivo se llame como el título,
    que el título esté arriba de la cabeza y no la tape, y que se vea durante 5 segundos. Pídele a una persona que vea el resultado, o mándamelo a revisar.
+
+## 14. Actualizar a la compilación B2 (subtítulos)
+1. Descomprime `jorcam-android-B2-cambios.zip` encima de tu carpeta (acepta reemplazar). Trae tu `build.gradle.kts` con los cambios para el motor de voz
+   y el workflow con el paso nuevo que descarga whisper.cpp. Si habías cambiado algo más en el workflow, revísalo después de copiar.
+2. `cd "$env:USERPROFILE\Documents\Proyecto JorCam\jorcam-android"`
+3. `git add .` , `git commit -m "B2: subtitulos con Whisper"` , `git push`
+4. Actions: esta compilación tarda más (compila el motor de voz). Si falla, copia las líneas con `error` (las de CMake, ninja o whisper son las importantes) y mándamelas.
+5. Instala el APK (tu llave firmada permite actualizar encima, si hiciste el paso 11).
+6. Prueba con Wi-Fi: Licencia Pro activa → graba 30 segundos hablando de frente, con pausas → Detener y guardar. La primera vez descarga el modelo (142 MB, avisa cada 10 por ciento).
+   Luego transcribe, te muestra la pantalla de revisión (un cuadro por frase) y al continuar escribe el texto y guarda.
+7. Anota y mándame: cuánto tardó la transcripción (la app lo anuncia), si los subtítulos coinciden con lo que dijiste, si quedan debajo de la barbilla sin tapar la cara,
+   y si la pantalla de revisión se lee bien con tu lector.

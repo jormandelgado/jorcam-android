@@ -38,6 +38,30 @@ class Ajustes(contexto: Context) {
         get() = p.getInt("tit_tam", 100)
         set(v) { p.edit().putInt("tit_tam", v).apply() }
 
+    var subActivos: Boolean
+        get() = p.getBoolean("sub_activos", true)
+        set(v) { p.edit().putBoolean("sub_activos", v).apply() }
+
+    var subRevisar: Boolean
+        get() = p.getBoolean("sub_revisar", true)
+        set(v) { p.edit().putBoolean("sub_revisar", v).apply() }
+
+    var subColor: String
+        get() = p.getString("sub_color", "Blanco") ?: "Blanco"
+        set(v) { p.edit().putString("sub_color", v).apply() }
+
+    var subFuente: String
+        get() = p.getString("sub_fuente", "Clásica (Arial)") ?: "Clásica (Arial)"
+        set(v) { p.edit().putString("sub_fuente", v).apply() }
+
+    var subTam: Int
+        get() = p.getInt("sub_tam", 60)
+        set(v) { p.edit().putInt("sub_tam", v).apply() }
+
+    var modeloVoz: String
+        get() = p.getString("modelo_voz", Modelo.PREDETERMINADO) ?: Modelo.PREDETERMINADO
+        set(v) { p.edit().putString("modelo_voz", v).apply() }
+
     var vozPropia: Boolean
         get() = p.getBoolean("voz_propia", false)
         set(v) { p.edit().putBoolean("voz_propia", v).apply() }

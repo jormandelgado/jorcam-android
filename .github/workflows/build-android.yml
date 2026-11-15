@@ -57,6 +57,9 @@ jobs:
             echo "Sin llave propia: el APK se firmará con la llave de depuración (sirve para instalar y probar)."
           fi
 
+      - name: Descargar el motor de voz (whisper.cpp, versión fija)
+        run: git clone --depth 1 --branch v1.7.4 https://github.com/ggerganov/whisper.cpp android/app/src/main/cpp/whisper.cpp
+
       - name: Compilar el APK
         working-directory: android
         run: gradle assembleRelease --no-daemon --stacktrace
