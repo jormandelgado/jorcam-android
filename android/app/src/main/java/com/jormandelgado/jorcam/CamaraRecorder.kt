@@ -53,8 +53,51 @@ class CamaraRecorder(private val ctx: Context, private val superficie: SurfaceVi
 
     // ---------- Abrir la cámara ----------
 
+    data class Info(val id: String, val frontal: Boolean, val ancho: Int, val alto: Int)
+
+    private var anchoMaximo = 1920
+
+    /** Todas las cámaras del teléfono, la trasera principal primero, con el tamaño de video que ofrece cada una. */
+    fun listar(): List<Info> {
+        val encontradas = ArrayList<Pair<Info, Long>>()
+        for (id in manager.cameraIdList) {
+            try {
+                val c = manager.getCameraCharacteristics(id)
+                val cara = c.get(CameraCharacteristics.LENS_FACING)
+                if (cara != CameraCharacteristics.LENS_FACING_BACK && cara != CameraCharacteristics.LENS_FACING_FRONT) continue
+                val mapa = c.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: continue
+                val videos = mapa.getOutputSizes(MediaRecorder::class.java)?.toList() ?: continue
+                val mejor = videos.filter { it.width * 9 == it.height * 16 && it.width <= 1920 }.maxByOrNull { it.width } ?: continue
+                val sensor = c.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
+                val area = if (sensor != null) sensor.width.toLong() * sensor.height else 0L
+                encontradas.add(Pair(Info(id, cara == CameraCharacteristics.LENS_FACING_FRONT, mejor.width, mejor.height), area))
+            } catch (e: Exception) {
+            }
+        }
+        val traseras = encontradas.filter { !it.first.frontal }.sortedByDescending { it.second }.map { it.first }
+        val frontales = encontradas.filter { it.first.frontal }.sortedByDescending { it.second }.map { it.first }
+        return traseras + frontales
+    }
+
+    /** Abre una cámara concreta (la que pide la computadora), con un ancho máximo de video. */
+    fun abrirId(id: String, anchoMaximo: Int) {
+        cerrarDispositivo()
+        this.anchoMaximo = anchoMaximo
+        if (hilo == null) {
+            hilo = HandlerThread("jorcam-camara").also { it.start() }
+            manejador = Handler(hilo!!.looper)
+        }
+        val c = manager.getCameraCharacteristics(id)
+        frontal = c.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT
+        idActual = id
+        caracteristicas = c
+        elegirTamanos(c)
+        alVistaLista?.invoke(tamanoVista)
+    }
+
     fun abrir(frontal: Boolean) {
         cerrarDispositivo()
+        anchoMaximo = 1920
         this.frontal = frontal
         if (hilo == null) {
             hilo = HandlerThread("jorcam-camara").also { it.start() }
@@ -92,10 +135,10 @@ class CamaraRecorder(private val ctx: Context, private val superficie: SurfaceVi
 
     private fun elegirTamanos(c: CameraCharacteristics) {
         val mapa = c.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: return
+        val tope = anchoMaximo
         val videos = mapa.getOutputSizes(MediaRecorder::class.java)?.toList() ?: emptyList()
-        tamanoVideo = videos.firstOrNull { it.width == 1920 && it.height == 1080 }
-            ?: videos.filter { it.width * 9 == it.height * 16 && it.width <= 1920 }.maxByOrNull { it.width }
-            ?: videos.filter { it.width <= 1920 }.maxByOrNull { it.width * it.height }
+        tamanoVideo = videos.filter { it.width * 9 == it.height * 16 && it.width <= tope }.maxByOrNull { it.width }
+            ?: videos.filter { it.width <= tope }.maxByOrNull { it.width * it.height }
             ?: Size(1280, 720)
         val vistas = mapa.getOutputSizes(SurfaceHolder::class.java)?.toList() ?: emptyList()
         tamanoVista = vistas.filter { it.width * tamanoVideo.height == it.height * tamanoVideo.width && it.width <= 1920 }
@@ -188,7 +231,7 @@ class CamaraRecorder(private val ctx: Context, private val superficie: SurfaceVi
         g.setVideoSource(MediaRecorder.VideoSource.SURFACE)
         g.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         g.setOutputFile(destino.absolutePath)
-        g.setVideoEncodingBitRate(10_000_000)
+        g.setVideoEncodingBitRate(5_000_000)
         g.setVideoFrameRate(30)
         g.setVideoSize(tamanoVideo.width, tamanoVideo.height)
         g.setVideoEncoder(MediaRecorder.VideoEncoder.H264)

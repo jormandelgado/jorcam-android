@@ -49,14 +49,17 @@ licencia offline idéntica a la PC · Cargar video (Pro) · reproducir último v
 - **Emojis:** se conservan en el título (solo se quitan del nombre del archivo) y en los subtítulos. Casilla "Agregar emojis automáticos a los subtítulos (Pro)", dentro de Ajustes generales, desactivada por defecto. Es un buscador de palabras clave, **no entiende el sentido de la frase**: pone como mucho un emoji al final de la línea, nunca en dos líneas seguidas ni repite el mismo.
 - **Selector de modo** al abrir la app (después de los permisos): grabación directa o conectar con la computadora (este segundo todavía avisa que llega en la próxima compilación). El botón "Cambiar de modo de trabajo" está en Ajustes generales.
 
-## Compilación C (siguiente): conectar con la computadora
-Diseño propuesto, tomado de cómo ya habla la página del teléfono con JorCam de PC (órdenes, eventos y trozos de video):
-- **El teléfono graba el video por su cuenta** (H.264 con audio, como en el modo directo) y, al detener, **lo manda a la PC**. Es más seguro que transmitir en vivo: no depende de que el Wi-Fi sea estable durante la grabación.
-- **La PC graba el audio con su micrófono** (como hoy) y hace todo lo demás igual: sincronía, silencios, título, subtítulos.
-- **USB:** igual que ahora (depuración USB y `adb reverse`); la app se conecta a la PC por 127.0.0.1.
-- **Wi-Fi:** la PC muestra y anuncia su dirección y un código de 6 números; la app los pide y se conecta. Windows preguntará una vez por el permiso del firewall.
-- **La PC controla** (Grabar, Pausar, Detener, Cambiar cámara); la app muestra la cámara en pantalla y el estado.
-- Requiere una versión nueva de JorCam de PC (1.0.2) y una compilación nueva de la app.
+## Compilación C (esta entrega): conectar con la computadora
+Funciona junto con **JorCam 1.0.2 de PC** (la app sola no hace nada en este modo).
+- **Cómo funciona:** la app hace lo mismo que la página del teléfono de la PC: le dice a la PC qué cámaras tiene, escucha sus órdenes (abrir una cámara, grabar, pausar, reanudar, detener) y manda sus eventos. La PC controla todo.
+- **Video:** el teléfono graba por su cuenta (MP4 con audio) y, **al detener, lo manda a la PC** (más seguro que transmitir en vivo). Si descartas la grabación desde la PC, el video no se envía.
+- **Audio:** el micrófono del teléfono es solo la referencia para sincronizar; el audio definitivo es el del micrófono de la PC (la V8), como hasta ahora.
+- **Pausa:** igual que con Chrome, el teléfono no se pausa; la PC recorta esos intervalos.
+- **USB:** depuración USB y cable (la PC ya hace `adb reverse`); la app se conecta a 127.0.0.1, sin código.
+- **Wi-Fi:** en el panel de la PC se activa "Conexión por Wi-Fi", que muestra y anuncia la dirección y un código de 6 números nuevo cada vez; la app los pide. Solo se pueden usar 4 rutas del servidor (`/hola`, `/orden`, `/evento`, `/chunk`) y solo con el código; tras 15 intentos fallidos, el Wi-Fi se apaga solo. La conexión es de la red local, sin cifrar.
+- **Cámaras:** la app ofrece todas las cámaras del teléfono (la trasera principal primero); la PC elige y cambia entre ellas como con Chrome.
+- **Si la app pasa a segundo plano grabando:** se detiene lo grabado y se manda a la PC.
+- **Módulos nuevos:** ModoPC.kt; cambios en CamaraRecorder.kt (listar cámaras y abrir una por identificador), MainActivity.kt y el manifiesto (permite http en la red local).
 
 ## Límites y riesgos
 1. No está compilada ni probada en un teléfono. Esperar errores en la primera compilación.

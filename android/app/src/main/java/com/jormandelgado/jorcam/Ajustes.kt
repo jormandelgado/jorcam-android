@@ -66,6 +66,10 @@ class Ajustes(contexto: Context) {
         get() = p.getString("modelo_voz", Modelo.PREDETERMINADO) ?: Modelo.PREDETERMINADO
         set(v) { p.edit().putString("modelo_voz", v).apply() }
 
+    var ipPC: String
+        get() = p.getString("ip_pc", "") ?: ""
+        set(v) { p.edit().putString("ip_pc", v).apply() }
+
     var vozPropia: Boolean
         get() = p.getBoolean("voz_propia", false)
         set(v) { p.edit().putBoolean("voz_propia", v).apply() }

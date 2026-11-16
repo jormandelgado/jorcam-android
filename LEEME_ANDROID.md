@@ -103,3 +103,21 @@ el Release también lo es; para descargas públicas usa tu repositorio público 
 5. Pruebas: (a) al abrir debe salir la pantalla para elegir el modo, y "Grabación directa" abre la cámara; (b) graba con título y subtítulos: en la pantalla de revisión los dos botones deben estar arriba, el botón Atrás debe funcionar,
    y cada frase debe tener su botón "Reproducir este tramo" que suene solo esa parte; (c) prueba un título con emojis y la casilla de emojis automáticos en Ajustes generales;
    (d) mira si los emojis se ven bien sobre el video, con contorno y sin deformarse.
+
+## 16. Compilación C: conectar con la computadora (necesita JorCam PC 1.0.2)
+**En la PC**
+1. Copia `jorcam.py` (versión 1.0.2) a tu carpeta `construccion` y pruébalo: `python "$env:USERPROFILE\Documents\Proyecto JorCam\construccion\jorcam.py"`.
+2. Abre Ajustes → "Cómo usar el teléfono" → "Con la app JorCam para Android". **Se aplica al reiniciar JorCam**: ciérralo y ábrelo de nuevo.
+   (Con esa opción, la PC ya no abre Chrome en el teléfono.) Si todo va bien, reconstruye el instalador (`construir_jorcam.ps1`): sale `JorCam-Setup-1.0.2.exe`.
+**Por cable USB**
+3. Conecta el teléfono con depuración USB ANTES de abrir JorCam en la PC. La PC dice: "Modo app de Android. Abre JorCam en el teléfono...".
+4. En el teléfono: actualiza la app (compilación C) → "Conectar con la computadora" → "Conectar por cable USB". La PC anuncia el teléfono y la cámara.
+**Por Wi-Fi**
+5. En el panel de la PC abre "Conexión con la app JorCam para Android" → "Activar conexión por Wi-Fi". La PC anuncia y escribe la dirección y el código.
+   Windows puede preguntar por el firewall: permite el acceso en **redes privadas**.
+6. En el teléfono (en la misma red Wi-Fi): "Conectar con la computadora", escribe la dirección y el código, "Conectar por Wi-Fi".
+   Si no conecta: revisa que no sea una red de invitados (muchas aíslan los equipos), prueba otra de las direcciones que muestra el panel, y que el firewall no lo bloquee.
+**Prueba**
+7. Desde la PC: Grabar, Pausar, Reanudar, Detener y guardar; Cambiar cámara; Descartar. Habla 20 segundos con pausas.
+   Comprueba que el audio del video final sea el de la PC (V8), que no haya desfase y que el video salga vertical de 1080x1920.
+8. Anota: cuánto tarda el envío del video al detener (por USB y por Wi-Fi), y cualquier aviso extraño de la PC.

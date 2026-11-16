@@ -46,4 +46,10 @@
     <string name="rev_ayuda">Corrige cada frase por separado. Si dejas una vacía, se borra. Con el botón de cada tramo puedes escucharlo antes de corregir.</string>
     <string name="rev_continuar">Continuar con estos subtítulos</string>
     <string name="rev_sin">Guardar sin subtítulos</string>
+    <string name="pc_titulo">Conectar con la computadora</string>
+    <string name="pc_usb">Conectar por cable USB</string>
+    <string name="pc_wifi">Conectar por Wi-Fi</string>
+    <string name="pc_ip">Dirección de la computadora (por ejemplo 192.168.1.23)</string>
+    <string name="pc_codigo">Código de 6 números que muestra la computadora</string>
+    <string name="pc_desconectar">Desconectar y volver</string>
 </resources>

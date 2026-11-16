@@ -358,6 +358,104 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Conexión con la computadora: queda abajo y deja ver la cámara -->
+    <LinearLayout
+        android:id="@+id/pantallaPC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:accessibilityPaneTitle="Conectar con la computadora"
+        android:background="#E6000000"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textoPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pc_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/grupoConexionPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnPCUsb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/pc_usb"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/campoIP"
+                android:paddingTop="8dp"
+                android:text="@string/pc_ip"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/campoIP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:digits="0123456789.:"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/campoCodigo"
+                android:paddingTop="8dp"
+                android:text="@string/pc_codigo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/campoCodigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLength="6"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnPCWifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="56dp"
+                android:text="@string/pc_wifi"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnPCDesconectar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="56dp"
+            android:text="@string/pc_desconectar"
+            android:textSize="18sp" />
+    </LinearLayout>
+
     <!-- Pantalla para elegir el modo de trabajo (al abrir la app) -->
     <LinearLayout
         android:id="@+id/pantallaModo"

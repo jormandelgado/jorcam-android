@@ -76,7 +76,16 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
             revision.cancelar()
         }
     }
-    private var modo = 0 // 0 = todavía no eligió, 1 = grabación directa
+    private var modo = 0 // 0 = todavía no eligió, 1 = grabación directa, 2 = conectado con la computadora
+    private lateinit var pantallaPC: View
+    private lateinit var grupoConexionPC: View
+    private lateinit var textoPC: TextView
+    private lateinit var campoIP: EditText
+    private lateinit var campoCodigo: EditText
+    private lateinit var btnPCUsb: Button
+    private lateinit var btnPCWifi: Button
+    private lateinit var btnPCDesconectar: Button
+    private lateinit var pc: ModoPC
     private lateinit var spinnerMic: Spinner
     private lateinit var spinnerSens: Spinner
     private lateinit var spinnerAntes: Spinner
@@ -148,6 +157,14 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         btnModoPC = findViewById(R.id.btnModoPC)
         btnModo = findViewById(R.id.btnModo)
         checkEmojis = findViewById(R.id.checkEmojis)
+        pantallaPC = findViewById(R.id.pantallaPC)
+        grupoConexionPC = findViewById(R.id.grupoConexionPC)
+        textoPC = findViewById(R.id.textoPC)
+        campoIP = findViewById(R.id.campoIP)
+        campoCodigo = findViewById(R.id.campoCodigo)
+        btnPCUsb = findViewById(R.id.btnPCUsb)
+        btnPCWifi = findViewById(R.id.btnPCWifi)
+        btnPCDesconectar = findViewById(R.id.btnPCDesconectar)
         spinnerMic = findViewById(R.id.spinnerMic)
         spinnerSens = findViewById(R.id.spinnerSens)
         spinnerAntes = findViewById(R.id.spinnerAntes)
@@ -181,6 +198,20 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         onBackPressedDispatcher.addCallback(this, atrasRevision)
         btnModoDirecto.setOnClickListener { elegirModo(1) }
         btnModoPC.setOnClickListener { elegirModo(2) }
+        pc = ModoPC(camara, cacheDir, { texto -> decir(texto) }, { conectado -> runOnUiThread { alCambiarPC(conectado) } })
+        btnPCUsb.setOnClickListener { conectarPC("127.0.0.1", 8765, "") }
+        btnPCWifi.setOnClickListener {
+            val direccion = campoIP.text.toString().trim()
+            val clave = campoCodigo.text.toString().trim()
+            if (direccion.isEmpty() || clave.length != 6) {
+                decir("Escribe la dirección de la computadora y el código de seis números.")
+            } else {
+                ajustes.ipPC = direccion
+                val partes = direccion.split(":")
+                conectarPC(partes[0], partes.getOrNull(1)?.toIntOrNull() ?: 8766, clave)
+            }
+        }
+        btnPCDesconectar.setOnClickListener { mostrarModo() }
         configurarCamara()
         configurarAjustes()
         configurarBotones()
@@ -202,10 +233,12 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     override fun onResume() {
         super.onResume()
         if (modo == 1 && superficieLista && tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
+        if (modo == 2 && superficieLista && pc.conectado) pc.reabrirCamara()
     }
 
     override fun onPause() {
         if (fase == Fase.GRABANDO || fase == Fase.PAUSADO) finalizar(true) // si sales de la app grabando, se guarda
+        if (modo == 2) pc.alSalirDeApp()
         camara.cerrar()
         super.onPause()
     }
@@ -221,6 +254,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     override fun surfaceCreated(holder: SurfaceHolder) {
         superficieLista = true
         if (modo == 1 && tienePermisos() && fase == Fase.LISTO) iniciarCamara(camara.frontal)
+        if (modo == 2 && pc.conectado) pc.reabrirCamara()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -278,16 +312,33 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
             }
         }
         camara.alAbrirCamara = {
-            runOnUiThread { decir(if (camara.frontal) "Cámara frontal activa." else "Cámara trasera activa.") }
+            runOnUiThread {
+                if (modo == 2) {
+                    pc.alCamaraAbierta()
+                    decir(if (camara.frontal) "Cámara frontal activa." else "Cámara trasera activa.")
+                } else {
+                    decir(if (camara.frontal) "Cámara frontal activa." else "Cámara trasera activa.")
+                }
+            }
         }
         camara.alIniciar = {
             runOnUiThread {
-                fase = Fase.GRABANDO
-                decir("Grabando.")
-                actualizar()
+                if (modo == 2) {
+                    pc.alIniciado()
+                    decir("Grabando. La computadora controla la grabación.")
+                } else {
+                    fase = Fase.GRABANDO
+                    decir("Grabando.")
+                    actualizar()
+                }
             }
         }
-        camara.alError = { mensaje -> runOnUiThread { decir(mensaje) } }
+        camara.alError = { mensaje ->
+            runOnUiThread {
+                decir(mensaje)
+                if (modo == 2) pc.alError(mensaje)
+            }
+        }
     }
 
     // ------------------------------------------------------------------ botones
@@ -413,23 +464,55 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     private fun mostrarModo() {
+        pc.desconectar()
         modo = 0
         camara.cerrar()
+        pantallaPC.visibility = View.GONE
+        panel.visibility = View.GONE
+        btnControles.visibility = View.GONE
         pantallaModo.visibility = View.VISIBLE
         fondoAccesible(false)
         decir("Elige cómo quieres trabajar: grabación directa en el teléfono, o conectar con la computadora.")
     }
 
     private fun elegirModo(eleccion: Int) {
+        pantallaModo.visibility = View.GONE
         if (eleccion == 2) {
-            decir("Conectar con la computadora llega en la próxima compilación. Por ahora elige grabación directa.")
+            modo = 2
+            panel.visibility = View.GONE
+            btnControles.visibility = View.GONE
+            pantallaPC.visibility = View.VISIBLE
+            alCambiarPC(false)
+            campoIP.setText(ajustes.ipPC)
+            decir("Conectar con la computadora. Elige por cable USB, o escribe la dirección y el código que muestra la computadora y elige por Wi-Fi.")
             return
         }
         modo = 1
-        pantallaModo.visibility = View.GONE
+        pantallaPC.visibility = View.GONE
+        panel.visibility = View.VISIBLE
+        btnControles.visibility = View.VISIBLE
+        btnControles.setText(R.string.ocultar_controles)
         fondoAccesible(true)
         decir("Grabación directa en el teléfono.")
         iniciarCamara(false)
+    }
+
+    /** Muestra u oculta el formulario de conexión según haya o no conexión con la computadora. */
+    private fun alCambiarPC(conectado: Boolean) {
+        grupoConexionPC.visibility = if (conectado) View.GONE else View.VISIBLE
+        if (modo == 2) {
+            textoPC.text = if (conectado) "Conectado a la computadora. Se controla desde la PC." else "Sin conexión con la computadora."
+        }
+    }
+
+    private fun conectarPC(host: String, puerto: Int, clave: String) {
+        decir("Conectando con la computadora.")
+        pc.conectar(host, puerto, clave) { _, mensaje ->
+            runOnUiThread {
+                decir(mensaje)
+                textoPC.text = mensaje
+            }
+        }
     }
 
     private fun cerrarApp() {

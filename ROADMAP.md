@@ -1,6 +1,7 @@
 # Hoja de ruta de JorCam
 
-## PC v1.0.2 (registrado)
+## PC v1.0.2 (entregada: conexión con la app de Android por USB o Wi-Fi con código, silencios gratuitos, rotación del video; pendiente de prueba)
+Lo que sigue registrado para esta versión y todavía NO está hecho:
 1. **Vista previa en vivo en la ventana** (para encuadrarse y que un operador vea el video), conviviendo con la accesibilidad:
    - Cámara de la laptop: mostrar la imagen que ya recibe la página (hoy está oculta fuera de pantalla).
    - Cámara del teléfono: la imagen vive en la página del teléfono; hay que mandar fotogramas reducidos (unos 5 a 8 por segundo,
@@ -17,7 +18,7 @@
 - Compilación B1: título, nombre del archivo y detección de rostro (Pro).
 - Compilación B2: subtítulos con whisper.cpp y revisión por frases (Pro) — probada: compila, descarga el modelo y transcribe rápido en el Moto E40; falló la pantalla de revisión.
 - Compilación B2.1: revisión corregida (botones arriba, Atrás, escuchar cada tramo), emojis y selector de modo.
-- Compilación C: conexión con la PC por USB y Wi-Fi (el teléfono graba y manda el video a la PC al detener; la PC pone el audio, la sincronía, los silencios, el título y los subtítulos).
+- Compilación C: conexión con la PC por USB y Wi-Fi (el teléfono graba y manda el video a la PC al detener; la PC pone el audio, la sincronía, los silencios, el título y los subtítulos) — entregada junto con JorCam PC 1.0.2, pendiente de prueba.
 
 ## Android B2: revisión de subtítulos estilo TikTok
 Una pantalla de revisión con un cuadro de texto independiente por cada frase detectada ("Subtítulo 1 de 12, del segundo 3 al 5"), más el título
