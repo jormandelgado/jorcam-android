@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Visor de la cámara en vivo, a pantalla completa, mientras la app está abierta y durante la grabación -->
+    <SurfaceView
+        android:id="@+id/vista"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no" />
+
+    <Button
+        android:id="@+id/btnControles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:minHeight="48dp"
+        android:text="@string/ocultar_controles" />
+
+    <ScrollView
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#B3000000"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:id="@+id/controles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/registro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <ProgressBar
+                android:id="@+id/barra"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/campoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:hint="@string/titulo_pro"
+                android:importantForAutofill="no"
+                android:inputType="textCapSentences"
+                android:maxLength="90"
+                android:minHeight="56dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textColorHint="#555555"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnGrabar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/grabar"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnPausar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/pausar"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnDetener"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/detener"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnDescartar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/descartar"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnCamara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cambiar_camara"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnCargar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cargar_pro"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnReproducir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/reproducir"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnCarpeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/carpeta"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnLicencia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/licencia"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btnCerrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cerrar_app"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnAjustes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="56dp"
+                android:text="@string/ajustes_mostrar"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/contenedorAjustes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnModo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/cambiar_modo"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerMic"
+                android:text="@string/microfono"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerMic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <CheckBox
+                android:id="@+id/checkSilencios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/quitar_silencios"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerSens"
+                android:text="@string/agresividad"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerSens"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerAntes"
+                android:paddingTop="8dp"
+                android:text="@string/aire_antes"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerAntes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerDespues"
+                android:paddingTop="8dp"
+                android:text="@string/aire_despues"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerDespues"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitColor"
+                android:paddingTop="8dp"
+                android:text="@string/color_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerTitColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitFuente"
+                android:paddingTop="8dp"
+                android:text="@string/fuente_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerTitFuente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerTitTam"
+                android:paddingTop="8dp"
+                android:text="@string/tam_titulo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerTitTam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <CheckBox
+                android:id="@+id/checkSubs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/subs_activos"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/checkRevisar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/subs_revisar"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerSubColor"
+                android:paddingTop="8dp"
+                android:text="@string/color_subs"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerSubColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerSubFuente"
+                android:paddingTop="8dp"
+                android:text="@string/fuente_subs"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerSubFuente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerSubTam"
+                android:paddingTop="8dp"
+                android:text="@string/tam_subs"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerSubTam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/spinnerModelo"
+                android:paddingTop="8dp"
+                android:text="@string/modelo_voz"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerModelo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:minHeight="48dp" />
+            <CheckBox
+                android:id="@+id/checkEmojis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/emojis_auto"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/checkVoz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/voz_propia"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Conexión con la computadora: queda abajo y deja ver la cámara -->
+    <LinearLayout
+        android:id="@+id/pantallaPC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:accessibilityPaneTitle="Conectar con la computadora"
+        android:background="#E6000000"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textoPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pc_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/grupoConexionPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnPCUsb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="@string/pc_usb"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/campoIP"
+                android:paddingTop="8dp"
+                android:text="@string/pc_ip"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/campoIP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:digits="0123456789.:"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/campoCodigo"
+                android:paddingTop="8dp"
+                android:text="@string/pc_codigo"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/campoCodigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLength="6"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnPCWifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="56dp"
+                android:text="@string/pc_wifi"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnPCDesconectar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="56dp"
+            android:text="@string/pc_desconectar"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- Pantalla para elegir el modo de trabajo (al abrir la app) -->
+    <LinearLayout
+        android:id="@+id/pantallaModo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:accessibilityPaneTitle="Elegir modo de trabajo"
+        android:background="#FF101010"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/modo_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnModoDirecto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="72dp"
+            android:text="@string/modo_directo"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btnModoPC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="72dp"
+            android:text="@string/modo_pc"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <!-- Pantalla de revisión de subtítulos: los botones están arriba, fuera de la lista -->
+    <LinearLayout
+        android:id="@+id/pantallaRevision"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:accessibilityPaneTitle="Revisión de subtítulos"
+        android:background="#FF101010"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rev_titulo"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/btnRevContinuar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="@string/rev_continuar"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnRevSin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="@string/rev_sin"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/rev_ayuda"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/listaRevision"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>
