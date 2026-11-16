@@ -271,3 +271,4 @@ class ModoPC(
         camara.abrirId(info.id, anchoPedido)
     }
 }
+// Forzar compilacion fase c limpia
