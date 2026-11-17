@@ -1,7 +1,7 @@
 # Hoja de ruta de JorCam
 
 ## PC v1.0.2 (entregada: conexión con la app de Android por USB o Wi-Fi con código, silencios gratuitos, rotación del video; pendiente de prueba)
-Lo que sigue registrado para esta versión y todavía NO está hecho:
+Lo que sigue registrado y todavía NO está hecho (la vista previa en vivo ya se hizo en la 1.0.3):
 1. **Vista previa en vivo en la ventana** (para encuadrarse y que un operador vea el video), conviviendo con la accesibilidad:
    - Cámara de la laptop: mostrar la imagen que ya recibe la página (hoy está oculta fuera de pantalla).
    - Cámara del teléfono: la imagen vive en la página del teléfono; hay que mandar fotogramas reducidos (unos 5 a 8 por segundo,
@@ -23,3 +23,6 @@ Lo que sigue registrado para esta versión y todavía NO está hecho:
 ## Android B2: revisión de subtítulos estilo TikTok
 Una pantalla de revisión con un cuadro de texto independiente por cada frase detectada ("Subtítulo 1 de 12, del segundo 3 al 5"), más el título
 editable arriba, y los botones Continuar y Cancelar.
+
+## PC v1.0.3 y Android D: vista previa en vivo (entregadas, pendientes de prueba)
+Laptop: la imagen de la cámara en la ventana, en espejo. Teléfono: fotogramas por USB o Wi-Fi, enderezados por la PC. La imagen no se lee con el lector de pantalla; hay un botón para activarla o desactivarla (Alt+9) y otro para girarla.

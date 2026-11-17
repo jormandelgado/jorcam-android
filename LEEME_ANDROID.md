@@ -121,3 +121,12 @@ el Release también lo es; para descargas públicas usa tu repositorio público 
 7. Desde la PC: Grabar, Pausar, Reanudar, Detener y guardar; Cambiar cámara; Descartar. Habla 20 segundos con pausas.
    Comprueba que el audio del video final sea el de la PC (V8), que no haya desfase y que el video salga vertical de 1080x1920.
 8. Anota: cuánto tarda el envío del video al detener (por USB y por Wi-Fi), y cualquier aviso extraño de la PC.
+
+## 17. Compilación D: vista previa en la PC (con JorCam PC 1.0.3)
+1. Descomprime `jorcam-android-D-cambios.zip` encima de tu carpeta (3 archivos de código y las guías; no toca el Gradle).
+2. `cd "$env:USERPROFILE\Documents\Proyecto JorCam\jorcam-android"` y luego `git add .` , `git commit -m "D: vista previa para la PC"` , `git push`. Instala el APK nuevo.
+3. En la PC, instala JorCam 1.0.3 (ver GUIA_LANZAMIENTO.md, sección 10).
+4. Pruebas con el teléfono por USB: la imagen debe aparecer en la ventana de la PC en uno o dos segundos.
+   - Si sale de lado o al revés, pulsa "Girar la vista previa" hasta que quede derecha (se guarda) y **dime cuántas veces la giraste**: así corrijo el valor por defecto.
+   - Con la cámara frontal debe verse en espejo.
+   - Graba un video y compara con uno de antes: los cuadros por segundo y la calidad no deben empeorar. Si empeoran, desactiva la vista previa (Alt+9) y avísame.

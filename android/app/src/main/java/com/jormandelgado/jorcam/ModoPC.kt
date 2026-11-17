@@ -1,11 +1,20 @@
 package com.jormandelgado.jorcam
 
+import android.graphics.Bitmap
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.SystemClock
+import android.view.PixelCopy
+import android.view.SurfaceView
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Modo "conectar con la computadora". La app hace lo mismo que la página del teléfono de JorCam de PC:
@@ -17,6 +26,7 @@ import java.net.URL
  */
 class ModoPC(
     private val camara: CamaraRecorder,
+    private val superficie: SurfaceView,
     private val carpeta: File,
     private val decir: (String) -> Unit,
     private val alCambiarEstado: (Boolean) -> Unit
@@ -35,6 +45,7 @@ class ModoPC(
     @Volatile private var indice = -1
     @Volatile private var anchoPedido = 1920
     @Volatile private var inicioMs = 0L
+    @Volatile private var pausaVista = 0L
 
     private fun etiqueta(i: CamaraRecorder.Info) = "camera ${i.id}, facing ${if (i.frontal) "front" else "back"}"
 
@@ -74,6 +85,7 @@ class ModoPC(
             }
             conectado = true
             alCambiarEstado(true)
+            Thread { bucleVista() }.start()
             alTerminar(true, "Conectado a la computadora. Ahora la controlas desde la PC.")
             val camaras = JSONArray()
             for (c in lista) {
@@ -232,6 +244,67 @@ class ModoPC(
         evento(JSONObject().put("tipo", "detenido").put("duracion", duracion).put("fps_vista", 0.0))
     }
 
+    // ------------------------------------------------------------------ vista previa en la PC
+
+    /**
+     * Manda a la PC fotogramas pequeños (unos 4 por segundo) de lo que ve la cámara, para que se pueda encuadrar desde la computadora.
+     * Se copian de la pantalla con PixelCopy, sin tocar la cámara ni la grabación. Si la PC no quiere vista previa, se pausa.
+     */
+    private fun bucleVista() {
+        val hiloVista = HandlerThread("jorcam-vista")
+        hiloVista.start()
+        val manejador = Handler(hiloVista.looper)
+        try {
+            while (activo) {
+                val ahora = SystemClock.elapsedRealtime()
+                if (conectado && camara.abierta && ahora >= pausaVista) {
+                    try { capturarYEnviar(manejador) } catch (e: Exception) { }
+                }
+                try { Thread.sleep(150) } catch (e: InterruptedException) { break }
+            }
+        } finally {
+            hiloVista.quitSafely()
+        }
+    }
+
+    private fun capturarYEnviar(manejador: Handler) {
+        if (!superficie.holder.surface.isValid || superficie.width == 0) return
+        val vista = camara.tamanoVista
+        val ancho = 640
+        val alto = maxOf(ancho * vista.height / vista.width, 1)
+        val destino = Bitmap.createBitmap(ancho, alto, Bitmap.Config.ARGB_8888)
+        val resultado = AtomicInteger(-1)
+        val listo = CountDownLatch(1)
+        PixelCopy.request(superficie, destino, PixelCopy.OnPixelCopyFinishedListener { r ->
+            resultado.set(r)
+            listo.countDown()
+        }, manejador)
+        if (!listo.await(1, TimeUnit.SECONDS) || resultado.get() != PixelCopy.SUCCESS) {
+            destino.recycle()
+            return
+        }
+        val salida = ByteArrayOutputStream()
+        destino.compress(Bitmap.CompressFormat.JPEG, 60, salida)
+        destino.recycle()
+        enviarVista(salida.toByteArray())
+    }
+
+    private fun enviarVista(bytes: ByteArray) {
+        try {
+            val c = abrir("/vista", "POST", 4000)
+            c.doOutput = true
+            c.setRequestProperty("Content-Type", "image/jpeg")
+            c.setRequestProperty("X-Giro", camara.orientacionSensor.toString())
+            c.setRequestProperty("X-Espejo", if (camara.frontal) "1" else "0")
+            c.setFixedLengthStreamingMode(bytes.size)
+            c.outputStream.use { it.write(bytes) }
+            val respuesta = if (c.responseCode == 200) c.inputStream.bufferedReader().use { it.readText() } else "0"
+            c.disconnect()
+            if (respuesta.trim() == "0") pausaVista = SystemClock.elapsedRealtime() + 4000
+        } catch (e: Exception) {
+        }
+    }
+
     // ------------------------------------------------------------------ avisos de la cámara
 
     fun alCamaraAbierta() {
@@ -271,4 +344,3 @@ class ModoPC(
         camara.abrirId(info.id, anchoPedido)
     }
 }
-// Forzar compilacion fase c limpia

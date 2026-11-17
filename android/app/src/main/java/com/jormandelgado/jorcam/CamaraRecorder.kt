@@ -46,6 +46,14 @@ class CamaraRecorder(private val ctx: Context, private val superficie: SurfaceVi
     var pausado: Boolean = false
         private set
 
+    /** La cámara está abierta y mostrando la vista (sirve para saber cuándo hay imagen que mandar a la PC). */
+    val abierta: Boolean
+        get() = dispositivo != null && sesion != null
+
+    /** Giro del sensor (casi siempre 90 en la trasera y 270 en la frontal): la PC lo usa para enderezar la vista previa. */
+    val orientacionSensor: Int
+        get() = caracteristicas?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+
     var alError: ((String) -> Unit)? = null
     var alVistaLista: ((Size) -> Unit)? = null
     var alAbrirCamara: (() -> Unit)? = null

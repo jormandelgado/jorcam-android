@@ -61,6 +61,13 @@ Funciona junto con **JorCam 1.0.2 de PC** (la app sola no hace nada en este modo
 - **Si la app pasa a segundo plano grabando:** se detiene lo grabado y se manda a la PC.
 - **Módulos nuevos:** ModoPC.kt; cambios en CamaraRecorder.kt (listar cámaras y abrir una por identificador), MainActivity.kt y el manifiesto (permite http en la red local).
 
+## Compilación D (esta entrega): vista previa para la PC
+Funciona junto con **JorCam 1.0.3 de PC**.
+- La app copia lo que ve la cámara con PixelCopy (sin agregar nada a la cámara ni a la grabación, así no se arriesga el video) y manda a la PC unos 4 fotogramas por segundo, de 640x360 en JPEG.
+- **La PC los endereza** (usa el giro del sensor que manda la app) y los voltea en espejo si la cámara es la frontal. Si el fotograma llega mal orientado, el botón "Girar la vista previa" del panel lo corrige y queda guardado.
+- Si la PC no quiere vista previa (desactivada, o está activa la cámara de la laptop), la app deja de mandar fotogramas durante unos segundos y vuelve a preguntar.
+- Cambios: ModoPC.kt (envío de fotogramas), CamaraRecorder.kt (dos propiedades), MainActivity.kt (una línea). No cambia el Gradle.
+
 ## Límites y riesgos
 1. No está compilada ni probada en un teléfono. Esperar errores en la primera compilación.
 2. El Moto E40 es de gama baja: procesar 20 minutos puede ser lento y calentar el teléfono.

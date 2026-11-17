@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         onBackPressedDispatcher.addCallback(this, atrasRevision)
         btnModoDirecto.setOnClickListener { elegirModo(1) }
         btnModoPC.setOnClickListener { elegirModo(2) }
-        pc = ModoPC(camara, cacheDir, { texto -> decir(texto) }, { conectado -> runOnUiThread { alCambiarPC(conectado) } })
+        pc = ModoPC(camara, superficie, cacheDir, { texto -> decir(texto) }, { conectado -> runOnUiThread { alCambiarPC(conectado) } })
         btnPCUsb.setOnClickListener { conectarPC("127.0.0.1", 8765, "") }
         btnPCWifi.setOnClickListener {
             val direccion = campoIP.text.toString().trim()
