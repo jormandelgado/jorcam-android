@@ -130,3 +130,10 @@ el Release también lo es; para descargas públicas usa tu repositorio público 
    - Si sale de lado o al revés, pulsa "Girar la vista previa" hasta que quede derecha (se guarda) y **dime cuántas veces la giraste**: así corrijo el valor por defecto.
    - Con la cámara frontal debe verse en espejo.
    - Graba un video y compara con uno de antes: los cuadros por segundo y la calidad no deben empeorar. Si empeoran, desactiva la vista previa (Alt+9) y avísame.
+
+## 18. Compilación E: calidad máxima y vista previa vertical (con JorCam PC 1.0.4)
+1. Descomprime `jorcam-android-E-cambios.zip` encima de tu carpeta (3 archivos de código y las guías; no toca el Gradle).
+2. `cd "$env:USERPROFILE\Documents\Proyecto JorCam\jorcam-android"` y luego `git add .` , `git commit -m "E: calidad maxima y vista previa vertical"` , `git push`. Instala el APK nuevo.
+3. Pruebas con la PC por USB: (a) al grabar, la app debe decir "Grabando en HEVC" (o "en H.264" si el teléfono no tiene HEVC; dime cuál); (b) la imagen del teléfono en la PC debe verse **derecha y bien proporcionada** en la columna vertical, sin tocar nada;
+   (c) graba **1 minuto hablando de frente** y anota cuánto pesa el video final de la PC en cada calidad (Liviana, Equilibrada y Alta), y si notas diferencia de nitidez;
+   (d) comprueba que los cuadros por segundo siguen fluidos y que el teléfono no se calienta más de la cuenta.

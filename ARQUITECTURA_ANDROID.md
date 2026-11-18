@@ -68,6 +68,13 @@ Funciona junto con **JorCam 1.0.3 de PC**.
 - Si la PC no quiere vista previa (desactivada, o está activa la cámara de la laptop), la app deja de mandar fotogramas durante unos segundos y vuelve a preguntar.
 - Cambios: ModoPC.kt (envío de fotogramas), CamaraRecorder.kt (dos propiedades), MainActivity.kt (una línea). No cambia el Gradle.
 
+## Compilación E (esta entrega): calidad máxima y vista previa vertical
+Funciona junto con **JorCam 1.0.4 de PC**.
+- **Grabación para la PC en máxima calidad:** 1920x1080 a 30 cuadros fijos; **HEVC a 10 Mbps** si el teléfono lo permite (misma nitidez que H.264 con mucho menos peso) y, si no, H.264 a 16 Mbps. La app anuncia "Grabando en HEVC" o "en H.264". La PC vuelve a codificar el video final, así que este archivo es solo el material de origen.
+- **Modo directo:** sin cambios (H.264 a 5 Mbps al grabar y 4 Mbps el resultado), que fue lo que probaste y te gustó.
+- **Vista previa ya derecha:** la app pide el fotograma con la forma vertical de la pantalla (540 de ancho) y manda "giro 0"; la PC no tiene que girarlo.
+- Cambios: CamaraRecorder.kt (perfil de calidad), ModoPC.kt y MainActivity.kt (una línea). No cambia el Gradle.
+
 ## Límites y riesgos
 1. No está compilada ni probada en un teléfono. Esperar errores en la primera compilación.
 2. El Moto E40 es de gama baja: procesar 20 minutos puede ser lento y calentar el teléfono.

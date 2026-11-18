@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
             runOnUiThread {
                 if (modo == 2) {
                     pc.alIniciado()
-                    decir("Grabando. La computadora controla la grabación.")
+                    decir("Grabando en ${camara.codecUsado}. La computadora controla la grabación.")
                 } else {
                     fase = Fase.GRABANDO
                     decir("Grabando.")

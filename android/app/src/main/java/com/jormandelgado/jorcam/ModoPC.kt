@@ -214,7 +214,7 @@ class ModoPC(
             "grabar" -> {
                 val archivo = File(carpeta, "pc_${System.currentTimeMillis()}.mp4")
                 try {
-                    camara.empezar(archivo, null) // micrófono del teléfono: solo sirve de referencia
+                    camara.empezar(archivo, null, true) // máxima calidad; el micrófono del teléfono solo sirve de referencia
                 } catch (e: Exception) {
                     evento(JSONObject().put("tipo", "error").put("mensaje", "No se pudo empezar a grabar: ${e.message}"))
                 }
@@ -268,10 +268,10 @@ class ModoPC(
     }
 
     private fun capturarYEnviar(manejador: Handler) {
-        if (!superficie.holder.surface.isValid || superficie.width == 0) return
-        val vista = camara.tamanoVista
-        val ancho = 640
-        val alto = maxOf(ancho * vista.height / vista.width, 1)
+        if (!superficie.holder.surface.isValid || superficie.width == 0 || superficie.height == 0) return
+        // El fotograma se pide con la forma de la pantalla (vertical 9:16) y ya derecho; la PC no tiene que girarlo.
+        val ancho = 540
+        val alto = maxOf(ancho * superficie.height / superficie.width, 1)
         val destino = Bitmap.createBitmap(ancho, alto, Bitmap.Config.ARGB_8888)
         val resultado = AtomicInteger(-1)
         val listo = CountDownLatch(1)
@@ -294,7 +294,7 @@ class ModoPC(
             val c = abrir("/vista", "POST", 4000)
             c.doOutput = true
             c.setRequestProperty("Content-Type", "image/jpeg")
-            c.setRequestProperty("X-Giro", camara.orientacionSensor.toString())
+            c.setRequestProperty("X-Giro", "0") // ya viene derecho
             c.setRequestProperty("X-Espejo", if (camara.frontal) "1" else "0")
             c.setFixedLengthStreamingMode(bytes.size)
             c.outputStream.use { it.write(bytes) }

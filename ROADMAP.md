@@ -26,3 +26,7 @@ editable arriba, y los botones Continuar y Cancelar.
 
 ## PC v1.0.3 y Android D: vista previa en vivo (entregadas, pendientes de prueba)
 Laptop: la imagen de la cámara en la ventana, en espejo. Teléfono: fotogramas por USB o Wi-Fi, enderezados por la PC. La imagen no se lee con el lector de pantalla; hay un botón para activarla o desactivarla (Alt+9) y otro para girarla.
+
+## PC v1.0.4 y Android E (entregadas, pendientes de prueba)
+Visor vertical 9:16 para las dos cámaras sin botón de girar; video final con calidad constante (Alta, Equilibrada, Liviana) en vez de 14 Mbps fijos; el teléfono graba en HEVC para la PC si puede.
+Pendiente de decidir después de medir los pesos reales: pasar también el video FINAL de la PC a HEVC (hevc_qsv), que pesa menos pero es menos compatible; y quitar el ajuste avanzado de orientación de la vista previa cuando se confirme que la automática acierta.

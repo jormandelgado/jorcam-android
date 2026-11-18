@@ -228,27 +228,57 @@ class CamaraRecorder(private val ctx: Context, private val superficie: SurfaceVi
 
     // ---------- Grabación ----------
 
-    fun empezar(destino: File, microfono: AudioDeviceInfo?) {
+    /** Códec con el que se grabó el último video ("HEVC" o "H.264"). */
+    var codecUsado: String = "H.264"
+        private set
+
+    /**
+     * Prepara el grabador. Para la PC (que luego vuelve a codificar el video) se graba con la máxima calidad:
+     * HEVC a 10 Mbps si el teléfono lo permite (misma nitidez que H.264 con mucho menos peso) y, si no, H.264 a 16 Mbps.
+     * En el modo directo se mantiene H.264 a 5 Mbps.
+     */
+    private fun prepararGrabador(destino: File, microfono: AudioDeviceInfo?, paraPC: Boolean): MediaRecorder {
+        val intentos = if (paraPC) {
+            listOf(Pair(MediaRecorder.VideoEncoder.HEVC, 10_000_000), Pair(MediaRecorder.VideoEncoder.H264, 16_000_000))
+        } else {
+            listOf(Pair(MediaRecorder.VideoEncoder.H264, 5_000_000))
+        }
+        var ultimoError: Exception? = null
+        for ((codec, bitrate) in intentos) {
+            val g = MediaRecorder()
+            try {
+                g.setAudioSource(MediaRecorder.AudioSource.MIC)
+                g.setVideoSource(MediaRecorder.VideoSource.SURFACE)
+                g.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                g.setOutputFile(destino.absolutePath)
+                g.setVideoEncodingBitRate(bitrate)
+                g.setVideoFrameRate(30)
+                g.setVideoSize(tamanoVideo.width, tamanoVideo.height)
+                g.setVideoEncoder(codec)
+                g.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                g.setAudioEncodingBitRate(128_000)
+                g.setAudioSamplingRate(44_100)
+                g.setOrientationHint(caracteristicas?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90)
+                if (microfono != null) g.setPreferredDevice(microfono)
+                g.prepare()
+                codecUsado = if (codec == MediaRecorder.VideoEncoder.HEVC) "HEVC" else "H.264"
+                return g
+            } catch (e: Exception) {
+                ultimoError = e
+                try { g.reset() } catch (x: Exception) { }
+                g.release()
+            }
+        }
+        throw ultimoError ?: IllegalStateException("No se pudo preparar el grabador.")
+    }
+
+    fun empezar(destino: File, microfono: AudioDeviceInfo?, paraPC: Boolean = false) {
         val d = dispositivo ?: throw IllegalStateException("La cámara no está lista.")
         archivo = destino
         sesion?.close()
         sesion = null
 
-        val g = MediaRecorder()
-        g.setAudioSource(MediaRecorder.AudioSource.MIC)
-        g.setVideoSource(MediaRecorder.VideoSource.SURFACE)
-        g.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        g.setOutputFile(destino.absolutePath)
-        g.setVideoEncodingBitRate(5_000_000)
-        g.setVideoFrameRate(30)
-        g.setVideoSize(tamanoVideo.width, tamanoVideo.height)
-        g.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-        g.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        g.setAudioEncodingBitRate(128_000)
-        g.setAudioSamplingRate(44_100)
-        g.setOrientationHint(caracteristicas?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90)
-        if (microfono != null) g.setPreferredDevice(microfono)
-        g.prepare()
+        val g = prepararGrabador(destino, microfono, paraPC)
         grabador = g
 
         val vista = superficie.holder.surface
